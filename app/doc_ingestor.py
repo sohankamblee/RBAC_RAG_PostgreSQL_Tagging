@@ -7,12 +7,15 @@ from app.models import UploadRequest
 from app.vector_store import chroma_collection
 from app.embedder import splitter
 
+# function to ingest a document, chunk it, embed the chunks, and store metadata
 async def ingest_document(request: UploadRequest, user):
     # Extract document details from the request
     title = request.title
     content = request.content
 
-    chunks = splitter.create_documents(content)  # List[Document], each Document is a chunk
+    # text splitting
+    chunks = splitter.create_documents(content)  
+
     if not chunks:
         raise HTTPException(status_code=400, detail="Document content is empty or too short to chunk")
     
@@ -20,10 +23,13 @@ async def ingest_document(request: UploadRequest, user):
     chunk_texts = [chunk.page_content for chunk in chunks]
     chunk_embeddings = embed_doc(chunk_texts)  # List[List[float]], one embedding per chunk
 
+    # check if number of embeddings match the number of chunks
     if len(chunk_texts) != len(chunk_embeddings):
         raise HTTPException(status_code=500, detail="Mismatch between chunks and embeddings")
     
-    # Prepare metadata (tags, roles, departments)
+    # Prepare metadata (tags, roles, departments) to be stored
+    # Assuming user is a dictionary with necessary fields
+    # tags stores RBAC tags, roles, departments, and access level
     tags = {
         "departments": user.get("departments", []),
         "roles": user.get("roles", []),
@@ -31,11 +37,15 @@ async def ingest_document(request: UploadRequest, user):
         "access_level": user.get("access_level", "general_access")  # Default to 'general_access'
     }
 
+    # Prepare user info for metadata storage
     user_info = {
         "id": user["id"]  # Or use user["user_id"] depending on your user model
     }
 
-    # Store metadata (title, content, embedding, user info, tags)
+    # Store metadata (title, content, embedding, user info, tags) in PostgreSQL table document_metadata
+    # returns document_id 
+    # store embeddings in ChromaDB (vector store) - Persistent storage
+    # returns confirmation of successful upload
     try:
           #     Store in PostgreSQL database
         document_id = await store_metadata(title, content, user_info, tags)
@@ -63,8 +73,7 @@ async def ingest_document(request: UploadRequest, user):
             "document_id": document_id,
             "chunks_uploaded": len(chunk_texts)
         }
-
-        return {"status": "success", "message": "Document uploaded successfully", "document_id": document_id}
+    # Handle any exceptions that occur during the process of storing metadata
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error storing document metadata: {str(e)}")
 

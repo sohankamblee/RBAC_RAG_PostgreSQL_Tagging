@@ -16,11 +16,19 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # --- SQLAlchemy Setup ---
+
+# create_async_engine is used for asynchronous database operations
+# declarative_base is used to create a base class for declarative models for SQL Database
+# sessionmaker creates a session factory for managing database sessions
+# session is needed to interact with the database
 engine = create_async_engine(DATABASE_URL, echo=True)
 Base = declarative_base()
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
+# creating the database tables
 # --- TABLE: users ---
+
+# table to store user information
 class User(Base):
     __tablename__ = 'users'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -30,6 +38,8 @@ class User(Base):
     access_tags = Column(ARRAY(Text))
 
 # --- TABLE: document_metadata ---
+
+# table to store metadata of documents
 class DocumentMetadata(Base):
     __tablename__ = 'document_metadata'
     document_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -42,7 +52,16 @@ class DocumentMetadata(Base):
     access_level = Column(String)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+
+
+
+
 # --- FUNCTION: get_user_by_token ---
+
+# Function to retrieve user information based on the username extracted from the JWT token
+# returns a dictionary with user details
+# result stores user information from the database
+# scalar_one_or_none() returns a single result or None if no result is found
 async def get_user_by_token(username: str) -> dict:
     async with async_session() as session:
         result = await session.execute(select(User).where(User.username == username))
@@ -56,8 +75,17 @@ async def get_user_by_token(username: str) -> dict:
                 "access_tags": user.access_tags,
             }
         return None
+    
+
+
 
 # --- FUNCTION: store_metadata ---
+
+# Function to store document metadata in the PostgreSQL database
+# metadata is an instance of DocumentMetadata
+# title, content, user_info, and tags are parameters to store in the metadata
+# session.commit() commits the transaction (add metadata) to the database
+# function returns the document_id of the stored metadata
 async def store_metadata(title: str, content: str,  user_info: dict, tags: dict):
     async with async_session() as session:
         metadata = DocumentMetadata(
@@ -73,7 +101,15 @@ async def store_metadata(title: str, content: str,  user_info: dict, tags: dict)
         await session.commit()
         return str(metadata.document_id)
 
+
+
+
 # --- FUNCTION: get_documents_by_filter ---
+
+# Function to retrieve documents based on the user's access tags
+# execute() helps to execute SQL query
+# SQL QUERY is selecting documents from DocumentMetadata where access_tags match the user's access_tags
+# function returns a list of documents with title, content, and document_id
 async def get_documents_by_filter(user_info: dict):
     async with async_session() as session:
         result = await session.execute(
