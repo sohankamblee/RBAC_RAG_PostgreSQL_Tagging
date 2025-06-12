@@ -1,0 +1,49 @@
+                        ┌────────────────────────────────────────────┐
+                        │               1. Client/User               │
+                        │  - Sends JWT-authenticated requests        │
+                        │  - Uses /upload and /ask APIs              │
+                        └────────────────────────────────────────────┘
+                                         │
+                                         ▼
+                        ┌────────────────────────────────────────────┐
+                        │              2. FastAPI App                │
+                        │              (main.py)                     │
+                        │ - /upload endpoint                         │
+                        │ - /ask endpoint                            │
+                        └────────────────────────────────────────────┘
+                                         │
+              ┌──────────────────────────┴─────────────────────────┐
+              ▼                                                    ▼
+┌────────────────────────────┐                  ┌───────────────────────────────────┐
+│       Auth Layer           │                  │     Query Processing Layer        │
+│       (auth.py)            │                  │       (rag_engine.py)             │
+│ - Extracts user from JWT   │                  │ - Takes query from user           │
+│ - Validates roles/dept     │                  │ - Calls retriever.py              │
+└────────────────────────────┘                  └───────────────────────────────────┘
+              │                                                    │
+              ▼                                                    ▼
+┌────────────────────────────┐                  ┌───────────────────────────────────┐
+│   Document Ingestion       │                  │        Retriever Layer             │
+│  (document_ingestor.py)    │                  │         (retriever.py)             │
+│ - Accepts doc + tags       │                  │ - Applies metadata filters         │
+│ - Calls embedder           │                  │ - Queries vector DB (ChromaDB)     │
+│ - Stores doc + metadata    │                  │ - Returns context docs             │
+└────────────────────────────┘                  └───────────────────────────────────┘
+              │                                                    │
+              ▼                                                    ▼
+┌────────────────────────────┐                  ┌───────────────────────────────────┐
+│  PostgreSQL + Vector DB    │◄─────────────────┤   Access-Filtered Documents       │
+│  (database.py, ChromaDB)   │                  └───────────────────────────────────┘
+│ - Metadata (tags, roles)   │                                   │
+│ - Vectors (pgvector/Chroma)│                                   ▼
+└────────────────────────────┘                  ┌───────────────────────────────────┐
+                                               │         LLM Inference Layer        │
+                                               │         (get_llm_response)         │
+                                               │ - Combine user query + context     │
+                                               │ - Return generated answer          │
+                                               └───────────────────────────────────┘
+                                                                   │
+                                                                   ▼
+                                                ┌────────────────────────────────┐
+                                                │      Response to User          │
+                                                └────────────────────────────────┘

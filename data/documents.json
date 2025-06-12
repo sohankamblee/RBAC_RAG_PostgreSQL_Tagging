@@ -1,0 +1,75 @@
+[
+  {
+    "title": "HR Leave Policy",
+    "content": "Employees are entitled to 24 paid leaves annually. Unused leaves can be carried forward up to 12 days. All leave applications must be approved by the reporting manager and HR.",
+    "tags": [
+      "hr_only"
+    ]
+  },
+  {
+    "title": "IT Infrastructure Overview",
+    "content": "The IT department manages internal systems including the email server, CI/CD pipeline, and network security.",
+    "tags": [
+      "it_only"
+    ]
+  },
+  {
+    "title": "Company Vision and Strategy 2025",
+    "content": "Our long-term goal is to expand into Southeast Asian markets with a focus on AI-driven solutions.",
+    "tags": [
+      "general_access"
+    ]
+  },
+  {
+    "title": "Performance Review Guidelines",
+    "content": "Performance reviews are conducted biannually. Managers should provide constructive feedback supported by performance metrics and peer reviews.",
+    "tags": ["manager_confidential"]
+  },
+  {
+    "title": "Employee Benefits Summary",
+    "content": "All employees are eligible for medical insurance, wellness programs, and annual health check-ups under the general benefits policy.",
+    "tags": ["general_access"]
+  },
+  {
+    "title": "HR Recruitment Workflow",
+    "content": "The recruitment pipeline involves screening, technical rounds, and final HR evaluation. All data must be stored securely and accessed only by HR personnel.",
+    "tags": ["hr_user"]
+  },
+  {
+    "title": "Departmental Budget Allocation 2025",
+    "content": "Each department has been allocated its budget for 2025. This document outlines projected expenditures for IT, HR, and Operations.",
+    "tags": ["manager_confidential", "cross_dept"]
+  },
+  {
+    "title": "Incident Response Plan",
+    "content": "The IT department should follow this protocol when responding to cybersecurity incidents, including breach identification, containment, and reporting.",
+    "tags": ["it_user"]
+  },
+  {
+    "title": "Cross-Departmental Collaboration Guidelines",
+    "content": "Managers from different departments should coordinate via biweekly syncs and shared OKRs to align project priorities.",
+    "tags": ["cross_dept"]
+  },
+  {
+    "title": "Onboarding Checklist",
+    "content": "This checklist includes account setup, laptop issuance, orientation schedules, and mandatory compliance training for new employees.",
+    "tags": ["general_access"]
+  },
+  {
+    "title": "Internal Audit Procedures",
+    "content": "Managers must prepare quarterly compliance reports and submit them for internal audit. Access to this document is limited to department heads.",
+    "tags": ["manager_confidential"]
+  },
+  {
+    "title": "Annual HR Training Calendar",
+    "content": "The training schedule includes DEI workshops, harassment prevention, and mental health seminars organized by HR.",
+    "tags": ["hr_only"]
+  },
+  {
+    "title": "IT System Maintenance Schedule",
+    "content": "Scheduled downtimes for server maintenance, patch updates, and database backups. Only IT staff should access this document.",
+    "tags": ["it_only"]
+  }
+
+
+]
