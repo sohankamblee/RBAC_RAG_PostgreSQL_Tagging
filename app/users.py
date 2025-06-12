@@ -1,6 +1,8 @@
 from database import async_session, User
 import asyncio
 
+# Function to insert a new user into the PostgreSQL database
+# This function creates a new user with the specified username, roles, departments, and access tags
 async def insert_user(username, roles, departments, access_tags):
     async with async_session() as session:
         user = User(
@@ -15,6 +17,8 @@ async def insert_user(username, roles, departments, access_tags):
         return str(user.id)
 
 # Example usage:
+# This function can be used to insert a user into the database
+# by calling it with the desired parameters.
 if __name__ == "__main__":
     # Change these values as needed for your test users
     asyncio.run(insert_user(

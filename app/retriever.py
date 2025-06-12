@@ -9,12 +9,12 @@ from app.vector_store import chroma_client
 import uuid
 
 # Function to retrieve documents based on the current user’s roles, departments, and access tags
+# RBAC and data-level access filtering
 async def retrieve_documents_by_filter(user=Depends(get_current_user)):
     # User details: roles, departments, tags
     if not user:
         raise HTTPException(status_code=401, detail="Unauthorized user")
-
-    # Apply RBAC and data-level access filtering using the user's metadata
+    
     user_filters = {
         "roles": user["roles"],
         "departments": user["departments"],
@@ -26,22 +26,22 @@ async def retrieve_documents_by_filter(user=Depends(get_current_user)):
 
     return documents
 
-
+# Function to retrieve context by searching through filtered documents
+# This function performs semantic search on the filtered documents based on the user's query
+# returns empty string if no documents are found
+# temporarily creates a collection in ChromaDB to perform the search
+# temp_collection stores the filtered documents and their embeddings
+# Function returns a context string which is a concatenation of the top K documents
 async def retrieve_context_by_search(query:str, filtered_docs):
-    #filtered_vectors = embed_doc(" ".join(doc["content"] for doc in filtered_docs))
-    
     if not filtered_docs:
         return ""
 
-    # Embed the query
     query_vector = embed_query_to_vector(query)
 
-    #  Prepare content + embeddings of filtered docs
     doc_texts = [doc["content"] for doc in filtered_docs]
     doc_ids = [f"temp_{i}" for i in range(len(filtered_docs))]
     doc_embeddings = embed_doc(doc_texts)
 
-    # creating a temporary collection in ChromaDB
     temp_collection_name = f"temp_filtered_context_{uuid.uuid4()}"
     temp_collection = chroma_client.get_or_create_collection(temp_collection_name)
 
@@ -52,7 +52,7 @@ async def retrieve_context_by_search(query:str, filtered_docs):
         ids=doc_ids
     )
 
-    # Perform semantic similarity search
+    # semantic similarity search
     result = temp_collection.query(
         query_embeddings=[query_vector],
         n_results=5,  # Top K documents
