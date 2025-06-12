@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "HR Leave Policy",
+    "content": "Employees are entitled to 24 paid leaves annually. Unused leaves can be carried forward up to 12 days. All leave applications must be approved by the reporting manager and HR.",
+    "tags": [
+      "hr_only"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "IT Infrastructure Overview",
+    "content": "The IT department manages internal systems including the email server, CI/CD pipeline, and network security.",
+    "tags": [
+      "it_only"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Company Vision and Strategy 2025",
+    "content": "Our long-term goal is to expand into Southeast Asian markets with a focus on AI-driven solutions.",
+    "tags": [
+      "general_access"
+    ]
+  }
+]

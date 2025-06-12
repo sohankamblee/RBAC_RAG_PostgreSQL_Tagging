@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-jose
+pydantic
+jwt
+SQLAlchemy
+#pgvector sqlalchemy>=1.4 psycopg2-binary
+langchain
+langchain-core
+langchain-community
+transformers
+tokenizers
+llama-index
+langchain-ollama
+langchain-huggingface
