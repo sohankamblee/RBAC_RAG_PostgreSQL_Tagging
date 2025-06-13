@@ -6,8 +6,8 @@ ALGORITHM = "HS256"
 
 # Generate payload with timezone-aware datetime
 payload = {
-    "sub": "0002",  # or your custom user ID
-    "role": "hr_user",     # optional - based on your auth system
+    "sub": "0003",  # or your custom user ID
+    "role": "it_user",      
     "exp": datetime.now(timezone.utc) + timedelta(hours=1),
 }
 

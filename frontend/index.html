@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RAG Chatbot RBAC</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ORG Chatbot</h1>
+        <div id="auth">
+            <input type="text" id="jwt" placeholder="Paste your JWT token here" />
+        </div>
+        <div id="chat">
+            <textarea id="question" placeholder="Ask your question..."></textarea>
+            <button onclick="askQuestion()">Ask</button>
+        </div>
+        <div id="answer"></div>
+        <div id="upload">
+            <h2>Upload Document</h2>
+            <input type="file" id="docfile" />
+            <button onclick="uploadDoc()">Upload</button>
+        </div>
+        <div id="upload-result"></div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

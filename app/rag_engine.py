@@ -1,6 +1,5 @@
 from app.retriever import retrieve_documents_by_filter, retrieve_context_by_search
 from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
 from langchain_ollama import OllamaLLM as Ollama
 
 # Initialize the LLM with Ollama
@@ -33,7 +32,6 @@ async def generate_answer(query:str,user):
         reply with only: "Sorry, you are not authorized to access this info."
         Otherwise, answer the user's query concisely based only on the context.
 
-        User role: {user_role}
         User query: {query}
         Context:
         {context}

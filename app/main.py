@@ -4,9 +4,24 @@ from app.auth import get_current_user
 from app.models import QueryRequest, UploadRequest
 from app.rag_engine import generate_answer
 from app.doc_ingestor import ingest_document
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 # Initialize FastAPI app
 app = FastAPI()
+
+# Add CORS middleware to allow cross-origin requests
+# allows integration with frontend application
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or specify your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Mount the frontend static files directory
+app.mount("/frontend", StaticFiles(directory="frontend", html=True), name="frontend")
 
 # Define API endpoints:-
 
