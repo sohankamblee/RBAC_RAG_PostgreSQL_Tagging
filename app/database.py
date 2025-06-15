@@ -36,6 +36,7 @@ class User(Base):
     roles = Column(ARRAY(Text))
     departments = Column(ARRAY(Text))
     access_tags = Column(ARRAY(Text))
+    hashed_password = Column(String)
 
 # --- TABLE: document_metadata ---
 
@@ -73,6 +74,7 @@ async def get_user_by_token(username: str) -> dict:
                 "roles": user.roles,
                 "departments": user.departments,
                 "access_tags": user.access_tags,
+                "hashed_password": user.hashed_password
             }
         return None
     
