@@ -1,1 +1,6 @@
 chroma_store
+chroma_store/
+chroma_db_test
+chroma_db_test/
+venv/
+chroma_store/
