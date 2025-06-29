@@ -1,6 +1,8 @@
 from app.retriever import retrieve_documents_by_filter, retrieve_context_by_search
 from langchain_core.prompts import PromptTemplate
 from langchain_ollama import OllamaLLM as Ollama
+from app.embedder import embed_query_to_vector
+from app.vector_store import chroma_collection
 
 # Initialize the LLM with Ollama
 llm =  Ollama(
@@ -11,39 +13,50 @@ llm =  Ollama(
 # Function to generate an answer based on the user's query and RBAC filtered documents
 # function to orchestrate the RAG process
 # returns a response which FastAPI will return as JSON response
-async def generate_answer(query:str,user):
-    # filter documents based on user roles, departments, and access tags
-    filtered_docs = await retrieve_documents_by_filter(user) 
+# Generate answer using RBAC-filtered ChromaDB docs
+async def generate_answer(query: str, user):
+    # Embed the query
+    query_embedding = embed_query_to_vector(query)
+    # RBAC filter: only docs with matching access_tags and roles
+    filter_dict = {
+        "$or": [
+            {"access_tags": {"$in": user["access_tags"]}},
+            {"roles": {"$in": user["roles"]}}
+        ]
+    }
+    results = chroma_collection.query(
+        query_embeddings=[query_embedding],
+        n_results=5,
+        where=filter_dict
+    )
+    docs = results.get("documents", [[]])[0]
+    context = "\n".join(docs) if docs else ""
 
-    # If no documents are found, return an "unauthorized" message
-    if not filtered_docs:
-        return {"answer": "You are not authorized to access this info."}
-    
-    # Retrieve context based on the user's query and the filtered documents
-    # retrieve on basis of semantic search
-    # returns a context string
-    context = await retrieve_context_by_search(query,filtered_docs)
-
-    # prompt template for the LLM involving the user role, query, and context
     prompt_template = PromptTemplate.from_template(
-        template =  """
-        You are a company assistant. 
-        If the provided context is empty or says the user is 'not authorized', 
-        reply with only: "Sorry, you are not authorized to access this info."
-        Otherwise, answer the user's query concisely based only on the context.
+        template="""
+    You are a company assistant.
 
-        User query: {query}
-        Context:
-        {context}
-        """
+    If the provided context is empty or says the user is 'not authorized',
+    reply with exactly: "Sorry, you are not authorized to access this info."
+
+    Otherwise, answer the user's query **strictly using only** the information in the context below.
+
+    ✅ Do not use any external or general knowledge.
+    🛑 Do not assume, infer, or guess missing details.
+    📌 Quote specific facts such as names, job titles, email addresses, dates, and policy instructions exactly as stated in the context.
+    🧠 If the answer is not explicitly stated in the context, reply with: "Sorry, this information is not available."
+
+    User Query: {query}
+
+    Context:
+    {context}
+    """
     )
-    # final prompt instance by passing user roles, query, and context
-    final_prompt = prompt_template.invoke(
-        {'user_role': ", ".join(user["roles"]), #user["roles"] is a list, hence joining with comma
-         'query':query, 
-         'context':context}
-    )
-    
-    # Invoke the LLM with the final prompt and return the response
+
+    final_prompt = prompt_template.invoke({
+        'user_role': ", ".join(user["roles"]),
+        'query': query,
+        'context': context
+    })
     response = llm.invoke(final_prompt)
-    return response
+    return response.strip()

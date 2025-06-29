@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+}
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 2em;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+#chat, #upload {
+    margin-top: 2em;
+}
+textarea {
+    width: 100%;
+    height: 80px;
+    margin-bottom: 1em;
+}
+button {
+    padding: 0.5em 1.5em;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background: #0056b3;
+}
+#upload, #upload-result {
+    display: none;
+}
+#answer, #upload-result {
+    margin-top: 1em;
+    padding: 1em;
+    background: #e9ecef;
+    border-radius: 4px;
+}
+#login-section input[type="text"], #login-section input[type="password"] {
+    width: 100%;
+    margin-bottom: 0.5em;
+    padding: 0.5em;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+#logout-btn {
+    float: right;
+    margin-bottom: 1em;
+    background: #dc3545;
+}
+#logout-btn:hover {
+    background: #a71d2a;
+}
+
+#user-info {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 1em;
+    margin-bottom: 1em;
+}
+.user-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-right: 0.5em;
+}
+#user-name {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #222;
+    line-height: 1.1;
+}
+#user-role {
+    color: #007bff;
+    font-size: 1em;
+    font-weight: normal;
+    margin-top: 0.1em;
+}

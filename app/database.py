@@ -40,18 +40,18 @@ class User(Base):
 
 # --- TABLE: document_metadata ---
 
-# table to store metadata of documents
-class DocumentMetadata(Base):
-    __tablename__ = 'document_metadata'
-    document_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    title = Column(String)
-    content = Column(Text)
-    created_by = Column(UUID(as_uuid=True), ForeignKey('users.id'))
-    departments = Column(ARRAY(Text))
-    roles = Column(ARRAY(Text))
-    access_tags = Column(ARRAY(Text))
-    access_level = Column(String)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+# # table to store metadata of documents
+# class DocumentMetadata(Base):
+#     __tablename__ = 'document_metadata'
+#     document_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+#     title = Column(String)
+#     content = Column(Text)
+#     created_by = Column(UUID(as_uuid=True), ForeignKey('users.id'))
+#     departments = Column(ARRAY(Text))
+#     roles = Column(ARRAY(Text))
+#     access_tags = Column(ARRAY(Text))
+#     access_level = Column(String)
+#     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
 
@@ -88,20 +88,20 @@ async def get_user_by_token(username: str) -> dict:
 # title, content, user_info, and tags are parameters to store in the metadata
 # session.commit() commits the transaction (add metadata) to the database
 # function returns the document_id of the stored metadata
-async def store_metadata(title: str, content: str,  user_info: dict, tags: dict):
-    async with async_session() as session:
-        metadata = DocumentMetadata(
-            title=title,
-            content=content,
-            created_by=user_info["id"],
-            departments=tags.get("departments", []),
-            roles=tags.get("roles", []),
-            access_tags=tags.get("access_tags", []),
-            access_level=tags.get("access_level", "general_access"),
-        )
-        session.add(metadata)
-        await session.commit()
-        return str(metadata.document_id)
+# async def store_metadata(title: str, content: str,  user_info: dict, tags: dict):
+#     async with async_session() as session:
+#         metadata = DocumentMetadata(
+#             title=title,
+#             content=content,
+#             created_by=user_info["id"],
+#             departments=tags.get("departments", []),
+#             roles=tags.get("roles", []),
+#             access_tags=tags.get("access_tags", []),
+#             access_level=tags.get("access_level", "general_access"),
+#         )
+#         session.add(metadata)
+#         await session.commit()
+#         return str(metadata.document_id)
 
 
 
@@ -112,21 +112,21 @@ async def store_metadata(title: str, content: str,  user_info: dict, tags: dict)
 # execute() helps to execute SQL query
 # SQL QUERY is selecting documents from DocumentMetadata where access_tags match the user's access_tags
 # function returns a list of documents with title, content, and document_id
-async def get_documents_by_filter(user_info: dict):
-    async with async_session() as session:
-        result = await session.execute(
-            select(DocumentMetadata)
-            .where(
-                DocumentMetadata.access_tags.op("&&")(
-                    cast(user_info["access_tags"], ARRAY(Text))
-                )
-            )
-        )
-        documents = result.scalars().all()
-        return [{
-            "title": doc.title,
-            "content": doc.content,
-            "doc_id": str(doc.document_id)
-        } for doc in documents]
+# async def get_documents_by_filter(user_info: dict):
+#     async with async_session() as session:
+#         result = await session.execute(
+#             select(DocumentMetadata)
+#             .where(
+#                 DocumentMetadata.access_tags.op("&&")(
+#                     cast(user_info["access_tags"], ARRAY(Text))
+#                 )
+#             )
+#         )
+#         documents = result.scalars().all()
+#         return [{
+#             "title": doc.title,
+#             "content": doc.content,
+#             "doc_id": str(doc.document_id)
+#         } for doc in documents]
 
 

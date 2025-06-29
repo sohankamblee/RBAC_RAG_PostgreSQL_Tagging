@@ -6,7 +6,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 # RecursiveCharacterTextSplitter splits text into smaller chunks based on character count,
-splitter = RecursiveCharacterTextSplitter()
+splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 
 
 #     Embed a list of chunk texts and return a list of embedding vectors.    
